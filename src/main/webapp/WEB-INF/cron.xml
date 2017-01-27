@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/worker</url>
+    <description>update worker</description>
+    <schedule>every 60 minutes</schedule>
+  </cron>
+  <cron>
+    <url>/ha/keepalive</url>
+    <description>keep alive</description>
+    <schedule>every 5 minutes</schedule>
+  </cron>  
+</cronentries>

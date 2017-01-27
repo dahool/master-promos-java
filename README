@@ -1,0 +1,23 @@
+GAE Commands:
+
+appengine:devserver
+appengine:update 	Create or update an app version. 	gcloud app deploy
+
+appengine:backends_stop 	This stops any running development server listening on the port as configured in your pom.xml file. This goal can be used in conjunction with the devserver_start command to do integration tests with the Maven plugin. 		
+appengine:backends_configure 	Configure the specified backend. 		
+appengine:backends_delete 	Delete the specified backend. 		
+appengine:backends_rollback 	Roll back a previously in-progress update. 		
+appengine:backends_start 	Start the specified backend. 		
+appengine:backends_update 	Update the specified backend or (if no backend is specified) all backends. 		
+appengine:enhance 	Runs the App Engine Datanucleus JDO enhancer. 		
+appengine:rollback 	Rollback an in-progress update. 	gcloud app versions start, gcloud app versions stop 	
+appengine:set_default_version 	Set the default application version. 	gcloud app services set-traffic 	
+ 	
+appengine:update_cron 	Update application cron jobs. 	gcloud app deploy 	
+appengine:update_dispatch 	Update the application dispatch configuration. 	gcloud app deploy 	
+appengine:update_dos 	Update application DoS protection configuration. 	gcloud app deploy 	
+appengine:update_indexes 	Update application indexes. 	gcloud datastore create-indexes [INDEX_YAML] 	
+appengine:update_queues 	Update application task queue definitions. 	gcloud app deploy 	
+appengine:vacuum_indexes 	Delete unused indexes from application. 	gcloud datastore cleanup-indexes [INDEX_YAML] 	
+appengine:start_module_version 	Start the specified module version. 	gcloud app versions start 	
+appengine:stop_module_version 	Stop the specified module version. 	gcloud app versions stop
