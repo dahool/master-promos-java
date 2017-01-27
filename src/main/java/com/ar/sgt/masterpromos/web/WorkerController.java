@@ -40,17 +40,23 @@ public class WorkerController {
 		List<Promo> promos = promoParser.parse(url);
 		List<Promo> currentPromos = promoDao.listAll();
 
+		boolean hasChanged = false;
+		
 		for (Promo cp : currentPromos) {
-			if (!promo_exists(promos, cp)) {
-				promoDao.delete(cp);
+			if (evalCurrentPromos(promos, cp)) {
+				hasChanged = true;
 			}
 		}
 
 		if (!promos.isEmpty()) {
+			hasChanged = true;
 			logger.info("Found {}", promos);
 			for (Promo p : promos) {
 				promoDao.save(p);
 			}
+		}
+		
+		if (hasChanged) {
 			logger.debug("Send notification");
 			notifyService.sendNotification();
 		}
@@ -59,16 +65,25 @@ public class WorkerController {
 		return "OK";
 	}
 
-	private boolean promo_exists(List<Promo> promos, Promo cp) {
+	private boolean evalCurrentPromos(List<Promo> promos, final Promo cp) {
 		ListIterator<Promo> it = promos.listIterator();
 		while (it.hasNext()) {
 			Promo p = it.next();
-			if (cp.getText().equals(p.getText()) && cp.getImage().equals(p.getImage())) {
+			// verificamos si ya existe la promo en la db
+			if (cp.getText().equals(p.getText())) {
+				// existe, la quitamos de la lista de promos encontradas, pero verificamos si cambio la imagen para actualizar el stock
 				it.remove();
-				return true;
+				if (!cp.getImage().equals(p.getImage())) {
+					cp.setImage(p.getImage());
+					promoDao.save(cp);
+					return true;
+				}
+				return false;
 			}
 		}
-		return false;
+		// la promo de la db no existe en las nuevas, la borramos y notificamos los cambios
+		promoDao.delete(cp);
+		return true;
 	}
 
 }
