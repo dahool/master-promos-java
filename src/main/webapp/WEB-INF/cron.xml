@@ -4,7 +4,18 @@
     <url>/worker</url>
     <description>update worker</description>
     <schedule>every 60 minutes</schedule>
+    <retry-parameters>
+      <job-retry-limit>1</job-retry-limit> <!-- retry times -->
+      <min-backoff-seconds>1800</min-backoff-seconds> <!-- minimum seconds to wait before retry -->
+      <max-backoff-seconds>2400</max-backoff-seconds> <!-- maximum seconds to wait before retry -->
+    </retry-parameters>
   </cron>
+  <cron>
+    <url>/worker</url>
+    <description>update worker midnight</description>
+    <schedule>every day 00:05</schedule>
+    <timezone>America/Argentina/Buenos_Aires</timezone>
+  </cron>  
   <cron>
     <url>/ha/keepalive</url>
     <description>keep alive</description>

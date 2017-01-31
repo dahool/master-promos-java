@@ -10,10 +10,13 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:sws="http://www.springframework.org/schema/web-services"
        xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/web-services
@@ -26,5 +29,8 @@
 	<context:component-scan base-package="com.ar.sgt.masterpromos.web"/>
 
 	<mvc:annotation-driven/>
+
+	<context:property-placeholder location="classpath:config.properties"/>	
+	<!-- util:properties id="config" location="classpath:config.properties"/-->
 
 </beans>

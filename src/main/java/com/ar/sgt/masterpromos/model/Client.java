@@ -2,9 +2,12 @@ package com.ar.sgt.masterpromos.model;
 
 import java.io.Serializable;
 
+import com.ar.sgt.masterpromos.orm.annotation.Entity;
+
+@Entity
 public class Client extends ModelKey implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	transient private static final long serialVersionUID = 1L;
 	
 	private String deviceId;
 	
@@ -29,6 +32,7 @@ public class Client extends ModelKey implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder b = new StringBuilder("Client [");
+		b.append("key=").append(getKey()).append(";");
 		b.append("deviceId=").append(getDeviceId()).append(";");
 		b.append("regId=").append(getRegId()).append("]");
 		return b.toString();

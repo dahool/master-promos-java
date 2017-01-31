@@ -6,6 +6,7 @@ import java.util.ListIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,14 +30,15 @@ public class WorkerController {
 	@Autowired
 	private PromoParser promoParser;
 	
-	//@Value("${service.url}")
-	private String url = "https://sorpresas.mastercard.com/ar/beneficios/main/index/1/10/op/key/descuentos_acumulables";
+	@Value("${service.url}")
+	private String url = null; //"https://sorpresas.mastercard.com/ar/beneficios/main/index/1/10/op/key/descuentos_acumulables";
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@RequestMapping(method = RequestMethod.GET, produces = "text/plain")
 	@ResponseBody
 	public String updatePromos() throws Exception {
+		
 		List<Promo> promos = promoParser.parse(url);
 		List<Promo> currentPromos = promoDao.listAll();
 
@@ -52,7 +54,7 @@ public class WorkerController {
 			hasChanged = true;
 			logger.info("Found {}", promos);
 			for (Promo p : promos) {
-				promoDao.save(p);
+				promoDao.save(promoParser.parseDetails(p));
 			}
 		}
 		
@@ -74,7 +76,9 @@ public class WorkerController {
 				// existe, la quitamos de la lista de promos encontradas, pero verificamos si cambio la imagen para actualizar el stock
 				it.remove();
 				if (!cp.getImage().equals(p.getImage())) {
+					// si hubo cambio de imagen es seguro por quedar sin stock. cambiamos el flag y listo
 					cp.setImage(p.getImage());
+					cp.setHasStock(false);
 					promoDao.save(cp);
 					return true;
 				}

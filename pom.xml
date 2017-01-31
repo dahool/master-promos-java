@@ -27,6 +27,7 @@
 
 		<appengine.sdk.version>1.9.48</appengine.sdk.version>
 		<appengine.app.version>1</appengine.app.version>
+		<beanutils.version>1.9.3</beanutils.version>
 	</properties>
 
 	<build>
@@ -181,6 +182,12 @@
             <artifactId>log4j-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+
+		<dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		    <version>${beanutils.version}</version>
+		</dependency>
 
 	</dependencies>
 	

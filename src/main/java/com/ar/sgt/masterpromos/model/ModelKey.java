@@ -1,7 +1,10 @@
 package com.ar.sgt.masterpromos.model;
 
+import com.ar.sgt.masterpromos.orm.annotation.Id;
+
 public abstract class ModelKey {
 
+	@Id
 	private Long key;
 	
 	public Long getKey() {
