@@ -2,6 +2,7 @@ package com.ar.sgt.masterpromos;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,8 +30,8 @@ public class PromoParser {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public List<Promo> parse(String url) throws Exception {
-		return parse(Jsoup.parse(loadFile("page.html")));
-		//return parse(Jsoup.parse(new URL(url), 30000));
+		//return parse(Jsoup.parse(loadFile("page.html")));
+		return parse(Jsoup.parse(new URL(url), 30000));
 	}
 	
 	public List<Promo> parse(Document doc) throws Exception {
@@ -56,8 +57,8 @@ public class PromoParser {
 	}
 	
 	public Promo parseDetails(Promo promo) throws Exception {
-		//Document doc = Jsoup.parse(new URL(promo.getUrl()), 30000);
-		Document doc = Jsoup.parse(loadFile("promodetail.html"));
+		Document doc = Jsoup.parse(new URL(promo.getUrl()), 30000);
+		//Document doc = Jsoup.parse(loadFile("promodetail.html"));
 	
 		String title = doc.select("article.promotion header h1 strong").text();
 		boolean hasStock = !doc.select("article.promotion section div.alert").text().equalsIgnoreCase(NO_HAY_STOCK_DISPONIBLE);

@@ -28,7 +28,7 @@ public class Promo extends ModelKey implements Serializable {
 	
 	private String dateTo;
 	
-	private boolean hasStock;
+	private Boolean hasStock;
 	
 	public String getUrl() {
 		return url;
@@ -78,11 +78,11 @@ public class Promo extends ModelKey implements Serializable {
 		this.title = title;
 	}
 
-	public boolean getHasStock() {
+	public Boolean getHasStock() {
 		return hasStock;
 	}
 
-	public void setHasStock(boolean hasStock) {
+	public void setHasStock(Boolean hasStock) {
 		this.hasStock = hasStock;
 	}
 
