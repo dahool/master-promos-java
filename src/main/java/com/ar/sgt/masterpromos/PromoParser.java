@@ -27,6 +27,8 @@ public class PromoParser {
 
 	private Pattern DATES_FIND = Pattern.compile("para pagos entre el (\\d{2}\\/\\d{2}\\/\\d{4}){1} al (\\d{2}\\/\\d{2}\\/\\d{4}){1}");
 	
+	private String SIN_DATOS = "Ninguna oferta.";
+	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public List<Promo> parse(String url) throws Exception {
@@ -38,19 +40,30 @@ public class PromoParser {
 		List<Promo> promos = new ArrayList<Promo>();
 		Elements ePromos = doc.select("div.promotion-content");
 
-		for (Element ePromo : ePromos) {
-			Promo promo = new Promo();
-			promo.setTitle("PARTE1");
-			promo.setText(ePromo.select("div.promotion-body-caption").text());
-			promo.setUrl(ePromo.select("a").attr("href"));
-			promo.setImage(ePromo.select("div.promotion-header").select("img").attr("src"));
-			promo.setPoints(ePromo.select("span.promotion-points").text());
-			Matcher m = PERC_FIND.matcher(promo.getText());
-			if (m.find()) {
-				promo.setPercentage(m.group(0));
+		if (ePromos.size() == 0) {
+			logger.info("Promo list is empty");
+			if (doc.select("section.socios").text().contains(SIN_DATOS)) {
+				logger.info(SIN_DATOS);
+			} else {
+				logger.error(doc.html());
+				throw new Exception("Page cannot be analized.");
 			}
-			promos.add(promo);
-			logger.info("Parsed: {}", promo);
+		} else {
+
+			for (Element ePromo : ePromos) {
+				Promo promo = new Promo();
+				promo.setText(ePromo.select("div.promotion-body-caption").text());
+				promo.setUrl(ePromo.select("a").attr("href"));
+				promo.setImage(ePromo.select("div.promotion-header").select("img").attr("src"));
+				promo.setPoints(ePromo.select("span.promotion-points").text());
+				Matcher m = PERC_FIND.matcher(promo.getText());
+				if (m.find()) {
+					promo.setPercentage(m.group(0));
+				}
+				promos.add(promo);
+				logger.info("Parsed: {}", promo);
+			}
+
 		}
 		
 		return promos;
