@@ -35,17 +35,19 @@ public class ServiceController {
 	@RequestMapping(value="/register", method = RequestMethod.POST)
 	public void register(@RequestBody Client newClient) {
 		Client c = clientDao.findByDeviceId(newClient.getDeviceId());
+		
 		if (c == null) {
 			c = clientDao.findByRegId(newClient.getRegId());
-			if (c != null) {
-				clientDao.delete(c);
+			if (c == null) {
+				c = new Client();
 			}
-			c = new Client();
 			c.setDeviceId(newClient.getDeviceId());
 		}
+		
 		c.setRegId(newClient.getRegId());
 		clientDao.save(c);
 		logger.debug("Registered {}", c);
+		
 	}
 	
 }
