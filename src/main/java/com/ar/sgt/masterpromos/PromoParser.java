@@ -23,17 +23,22 @@ public class PromoParser {
 
 	private static final String NO_HAY_STOCK_DISPONIBLE = "No hay stock disponible";
 
-	private Pattern PERC_FIND = Pattern.compile("([\\d]+\\%){1}");
-
-	private Pattern DATES_FIND = Pattern.compile("para pagos entre el (\\d{2}\\/\\d{2}\\/\\d{4}){1} al (\\d{2}\\/\\d{2}\\/\\d{4}){1}");
+	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0";
 	
-	private String SIN_DATOS = "Ninguna oferta.";
+	private final static String SIN_DATOS = "Ninguna oferta.";
+	
+	private static final int TIMEOUT = 45000;
+	
+	private final Pattern PERC_FIND = Pattern.compile("([\\d]+\\%){1}");
+
+	private final Pattern DATES_FIND = Pattern.compile("para pagos entre el (\\d{2}\\/\\d{2}\\/\\d{4}){1} al (\\d{2}\\/\\d{2}\\/\\d{4}){1}");
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public List<Promo> parse(String url) throws Exception {
 		//return parse(Jsoup.parse(loadFile("page.html")));
-		return parse(Jsoup.parse(new URL(url), 30000));
+		//return parse(Jsoup.parse(new URL(url), 30000));
+		return parse(Jsoup.connect(url).timeout(TIMEOUT).userAgent(USER_AGENT).get());
 	}
 	
 	public List<Promo> parse(Document doc) throws Exception {
@@ -70,7 +75,8 @@ public class PromoParser {
 	}
 	
 	public Promo parseDetails(Promo promo) throws Exception {
-		Document doc = Jsoup.parse(new URL(promo.getUrl()), 30000);
+		//Document doc = Jsoup.parse(new URL(promo.getUrl()), 30000);
+		Document doc = Jsoup.connect(promo.getUrl()).timeout(TIMEOUT).userAgent(USER_AGENT).get();
 		//Document doc = Jsoup.parse(loadFile("promodetail.html"));
 	
 		String title = doc.select("article.promotion header h1 strong").text();
@@ -116,7 +122,9 @@ public class PromoParser {
 		}
 		reader.close();*/
 		PromoParser parser = new PromoParser();
-		List<Promo> promos = parser.parse(Jsoup.parse(parser.loadFile("page.html")));
+		System.setProperty("javax.net.debug", "all");
+		List<Promo> promos = parser.parse("https://sorpresas.mastercard.com/ar");
+		//List<Promo> promos = parser.parse(Jsoup.parse(parser.loadFile("page.html")));
 		System.out.println(promos);
 		for (Promo promo : promos) {
 			parser.parseDetails(promo);
