@@ -24,8 +24,8 @@
   </cron>
   <cron>
     <url>/worker</url>
-    <description>every 15 minutes from 09:00 to 12:00</description>
-    <schedule>every 15 minutes from 09:00 to 12:00</schedule>
+    <description>every 10 minutes from 09:00 to 12:00</description>
+    <schedule>every 10 minutes from 09:00 to 12:00</schedule>
     <timezone>America/Argentina/Buenos_Aires</timezone>
   </cron>
   <cron>
