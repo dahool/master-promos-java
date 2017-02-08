@@ -2,8 +2,19 @@
 <cronentries>
   <cron>
     <url>/worker</url>
-    <description>every 60 minutes from 00:00 to 09:30</description>
-    <schedule>every 60 minutes from 00:00 to 09:30</schedule>
+    <description>every 120 minutes from 00:00 to 09:30</description>
+    <schedule>every 120 minutes from 00:00 to 09:30</schedule>
+    <retry-parameters>
+      <job-retry-limit>1</job-retry-limit> <!-- retry times -->
+      <min-backoff-seconds>3000</min-backoff-seconds> <!-- minimum seconds to wait before retry -->
+      <max-backoff-seconds>4200</max-backoff-seconds> <!-- maximum seconds to wait before retry -->
+    </retry-parameters>
+    <timezone>America/Argentina/Buenos_Aires</timezone>
+  </cron>
+  <cron>
+    <url>/worker</url>
+    <description>every 60 minutes from 13:30 to 23:59</description>
+    <schedule>every 60 minutes from 13:30 to 23:59</schedule>
     <retry-parameters>
       <job-retry-limit>1</job-retry-limit> <!-- retry times -->
       <min-backoff-seconds>1800</min-backoff-seconds> <!-- minimum seconds to wait before retry -->
@@ -13,19 +24,8 @@
   </cron>
   <cron>
     <url>/worker</url>
-    <description>every 60 minutes from 12:30 to 23:59</description>
-    <schedule>every 60 minutes from 12:30 to 23:59</schedule>
-    <retry-parameters>
-      <job-retry-limit>1</job-retry-limit> <!-- retry times -->
-      <min-backoff-seconds>1800</min-backoff-seconds> <!-- minimum seconds to wait before retry -->
-      <max-backoff-seconds>2400</max-backoff-seconds> <!-- maximum seconds to wait before retry -->
-    </retry-parameters>
-    <timezone>America/Argentina/Buenos_Aires</timezone>
-  </cron>
-  <cron>
-    <url>/worker</url>
-    <description>every 10 minutes from 09:50 to 12:00</description>
-    <schedule>every 10 minutes from 09:50 to 12:00</schedule>
+    <description>every 10 minutes from 09:50 to 13:15</description>
+    <schedule>every 10 minutes from 09:50 to 13:15</schedule>
     <timezone>America/Argentina/Buenos_Aires</timezone>
     <retry-parameters>
       <job-retry-limit>1</job-retry-limit> <!-- retry times -->
