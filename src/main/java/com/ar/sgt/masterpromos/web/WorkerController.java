@@ -1,5 +1,6 @@
 package com.ar.sgt.masterpromos.web;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -79,6 +80,7 @@ public class WorkerController {
 					// si hubo cambio de imagen es seguro por quedar sin stock. cambiamos el flag y listo
 					cp.setImage(p.getImage());
 					cp.setHasStock(false);
+					cp.setUpdated(Calendar.getInstance().getTime());
 					promoDao.save(cp);
 					return true;
 				}

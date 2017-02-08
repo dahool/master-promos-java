@@ -1,6 +1,7 @@
 package com.ar.sgt.masterpromos.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.ar.sgt.masterpromos.orm.annotation.Entity;
 
@@ -29,6 +30,10 @@ public class Promo extends ModelKey implements Serializable {
 	private String dateTo;
 	
 	private Boolean hasStock;
+	
+	private Date created;
+	
+	private Date updated;
 	
 	public String getUrl() {
 		return url;
@@ -102,6 +107,23 @@ public class Promo extends ModelKey implements Serializable {
 		this.dateTo = dateTo;
 	}
 
+	
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Date getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Date updated) {
+		this.updated = updated;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder b = new StringBuilder("Promo [");
@@ -114,6 +136,8 @@ public class Promo extends ModelKey implements Serializable {
 		b.append("image=").append(image).append(";");
 		b.append("points=").append(points).append(";");
 		b.append("hasStock=").append(hasStock).append(";");
+		b.append("created=").append(created).append(";");
+		b.append("updated=").append(updated).append(";");
 		b.append("percentage=").append(percentage).append("]");
 		return b.toString();
 	}

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,6 +62,7 @@ public class PromoParser {
 				promo.setUrl(ePromo.select("a").attr("href"));
 				promo.setImage(ePromo.select("div.promotion-header").select("img").attr("src"));
 				promo.setPoints(ePromo.select("span.promotion-points").text());
+				promo.setCreated(Calendar.getInstance().getTime());
 				Matcher m = PERC_FIND.matcher(promo.getText());
 				if (m.find()) {
 					promo.setPercentage(m.group(0));
