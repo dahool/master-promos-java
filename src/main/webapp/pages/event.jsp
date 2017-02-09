@@ -21,21 +21,21 @@
 	<form:form method="POST">
 	  <div class="form-group">
 	    <label for="eventTitle">Title:</label>
-	    <input type="text" class="form-control" id="eventTitle" name="eventTitle" placeholder="Title">
+	    <input type="text" class="form-control" id="eventTitle" name="eventTitle" placeholder="Title" required>
 	  </div>
 	  <div class="form-group">
 	    <label for="eventText">Text:</label>
-	    <textarea class="form-control" rows="3" id="eventText" name="eventText"></textarea>
+	    <textarea class="form-control" rows="3" id="eventText" name="eventText" required></textarea>
 	  </div>
 	  <div class="form-group">
 	    <label for="eventExpire">URL:</label>
-	    <input type="url" class="form-control" id="eventUrl" name="eventUrl">
+	    <input type="url" class="form-control" id="eventUrl" name="eventUrl" placeholder="URL" required>
 	  </div>	  
 	  <div class="row">
 	  <div class="col-md-6">
 	  <div class="form-group">
  		<label for="eventExpire">Expire Date:</label>
-		<input type='text' class="form-control" id="eventExpire" name="eventExpire">
+		<input type='text' class="form-control" id="eventExpire" name="eventExpire" required>
 	  </div>
 	  </div>
 	  </div>
