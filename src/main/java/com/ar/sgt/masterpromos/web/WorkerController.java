@@ -1,6 +1,5 @@
 package com.ar.sgt.masterpromos.web;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -17,6 +16,7 @@ import com.ar.sgt.masterpromos.NotificationService;
 import com.ar.sgt.masterpromos.PromoParser;
 import com.ar.sgt.masterpromos.dao.PromoDao;
 import com.ar.sgt.masterpromos.model.Promo;
+import com.ar.sgt.masterpromos.utils.DateUtils;
 
 @Controller
 @RequestMapping("/worker")
@@ -41,8 +41,9 @@ public class WorkerController {
 	public String updatePromos() throws Exception {
 		
 		List<Promo> promos = promoParser.parse(url);
-		List<Promo> currentPromos = promoDao.listAll();
-
+		//List<Promo> currentPromos = promoDao.listAll();
+		List<Promo> currentPromos = promoDao.listPromosOnly();
+		
 		boolean hasChanged = false;
 		
 		for (Promo cp : currentPromos) {
@@ -80,7 +81,7 @@ public class WorkerController {
 					// si hubo cambio de imagen es seguro por quedar sin stock. cambiamos el flag y listo
 					cp.setImage(p.getImage());
 					cp.setHasStock(false);
-					cp.setUpdated(Calendar.getInstance().getTime());
+					cp.setUpdated(DateUtils.getCurrent());
 					promoDao.save(cp);
 					return true;
 				}

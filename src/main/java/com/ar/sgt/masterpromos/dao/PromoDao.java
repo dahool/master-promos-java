@@ -14,4 +14,8 @@ public interface PromoDao {
 	
 	Promo findByText(String text);
 	
+	List<Promo> listExpired();
+	
+	List<Promo> listPromosOnly();
+	
 }

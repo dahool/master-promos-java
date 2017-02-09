@@ -29,6 +29,10 @@ public class ServiceController {
 	
 	@RequestMapping(value="/retrieve", method = RequestMethod.GET)
 	public List<Promo> retrievePromos() {
+		// delete expired if exists
+		for (Promo p : promoDao.listExpired()) {
+			promoDao.delete(p);
+		}
 		return promoDao.listAll();
 	}
 	

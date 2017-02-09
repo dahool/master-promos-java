@@ -2,9 +2,7 @@ package com.ar.sgt.masterpromos;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.ar.sgt.masterpromos.model.Promo;
+import com.ar.sgt.masterpromos.utils.DateUtils;
 
 @Component
 public class PromoParser {
@@ -62,7 +61,7 @@ public class PromoParser {
 				promo.setUrl(ePromo.select("a").attr("href"));
 				promo.setImage(ePromo.select("div.promotion-header").select("img").attr("src"));
 				promo.setPoints(ePromo.select("span.promotion-points").text());
-				promo.setCreated(Calendar.getInstance().getTime());
+				promo.setCreated(DateUtils.getCurrent());
 				Matcher m = PERC_FIND.matcher(promo.getText());
 				if (m.find()) {
 					promo.setPercentage(m.group(0));

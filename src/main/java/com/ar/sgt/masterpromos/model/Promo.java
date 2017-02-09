@@ -35,6 +35,8 @@ public class Promo extends ModelKey implements Serializable {
 	
 	private Date updated;
 	
+	private Date expires;
+	
 	public String getUrl() {
 		return url;
 	}
@@ -122,6 +124,14 @@ public class Promo extends ModelKey implements Serializable {
 
 	public void setUpdated(Date updated) {
 		this.updated = updated;
+	}
+
+	public Date getExpires() {
+		return expires;
+	}
+
+	public void setExpires(Date expires) {
+		this.expires = expires;
 	}
 
 	@Override
