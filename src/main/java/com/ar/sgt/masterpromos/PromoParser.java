@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +24,13 @@ public class PromoParser {
 
 	private static final String NO_HAY_STOCK_DISPONIBLE = "No hay stock disponible";
 
-	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0";
+	private static final String[] USER_AGENTS = {"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0",
+												"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+												"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+												"Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/51.0",
+												"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0",
+												"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0",
+												"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36"};
 	
 	private final static String SIN_DATOS = "Ninguna oferta.";
 	
@@ -35,10 +42,16 @@ public class PromoParser {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
+	private Random random = new Random();
+	
+	private String getUserAgent() {
+		String ua = USER_AGENTS[random.nextInt(USER_AGENTS.length)];
+		logger.info("Request using {}", ua);
+		return ua;
+	}
+	
 	public List<Promo> parse(String url) throws Exception {
-		//return parse(Jsoup.parse(loadFile("page.html")));
-		//return parse(Jsoup.parse(new URL(url), 30000));
-		return parse(Jsoup.connect(url).timeout(TIMEOUT).userAgent(USER_AGENT).get());
+		return parse(Jsoup.connect(url).timeout(TIMEOUT).userAgent(getUserAgent()).get());
 	}
 	
 	public List<Promo> parse(Document doc) throws Exception {
@@ -76,9 +89,7 @@ public class PromoParser {
 	}
 	
 	public Promo parseDetails(Promo promo) throws Exception {
-		//Document doc = Jsoup.parse(new URL(promo.getUrl()), 30000);
-		Document doc = Jsoup.connect(promo.getUrl()).timeout(TIMEOUT).userAgent(USER_AGENT).get();
-		//Document doc = Jsoup.parse(loadFile("promodetail.html"));
+		Document doc = Jsoup.connect(promo.getUrl()).timeout(TIMEOUT).userAgent(getUserAgent()).get();
 	
 		String title = doc.select("article.promotion header h1 strong").text();
 		boolean hasStock = !doc.select("article.promotion section div.alert").text().equalsIgnoreCase(NO_HAY_STOCK_DISPONIBLE);
