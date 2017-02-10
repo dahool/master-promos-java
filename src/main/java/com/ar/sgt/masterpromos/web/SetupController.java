@@ -43,7 +43,7 @@ public class SetupController {
 		promo.setImage(IMAGE);
 		promoDao.save(promo);
 		
-		//notifyService.sendNotification();
+		notifyService.sendNotification();
 		
 		return "event";
 	}
