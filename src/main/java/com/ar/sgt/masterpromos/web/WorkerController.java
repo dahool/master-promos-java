@@ -40,23 +40,32 @@ public class WorkerController {
 	@ResponseBody
 	public String updatePromos() throws Exception {
 		
-		List<Promo> promos = promoParser.parse(url);
-		//List<Promo> currentPromos = promoDao.listAll();
+		List<Promo> foundPromos = promoParser.parse(url);
 		List<Promo> currentPromos = promoDao.listPromosOnly();
 		
 		boolean hasChanged = false;
 		
 		for (Promo cp : currentPromos) {
-			if (evalCurrentPromos(promos, cp)) {
+			if (evalCurrentPromos(foundPromos, cp, new PromoTextEquals())) {
 				hasChanged = true;
 			}
 		}
 
-		if (!promos.isEmpty()) {
+		if (!foundPromos.isEmpty()) {
 			hasChanged = true;
-			logger.info("Found {}", promos);
-			for (Promo p : promos) {
-				promoDao.save(promoParser.parseDetails(p));
+			logger.info("Found {}", foundPromos);
+			for (Promo p : foundPromos) {
+				Promo newPromo = promoParser.parseDetails(p);
+				// luego de completar los datos verificamos si realmente hubo cambios o sólo cambió el título
+				Promo actual = findActual(currentPromos, newPromo, new PromoTitleEquals()); 
+				if (actual == null) {
+					// agregamos lo nuevo
+					promoDao.save(newPromo);
+				} else {
+					// actualizamos los cambios y seguimos
+					copyTo(newPromo, actual);
+					promoDao.save(actual);
+				}
 			}
 		}
 		
@@ -69,19 +78,32 @@ public class WorkerController {
 		return "OK";
 	}
 
-	private boolean evalCurrentPromos(List<Promo> promos, final Promo cp) {
+	private void copyTo(final Promo fromElement, final Promo toElement) {
+		toElement.setText(fromElement.getText());
+		toElement.setHasStock(fromElement.getHasStock());
+		toElement.setImage(fromElement.getImage());
+		toElement.setUpdated(DateUtils.getCurrent());
+	}
+
+	private Promo findActual(List<Promo> currentPromos, Promo newPromo, PromoTitleEquals comp) {
+		for (Promo p : currentPromos) {
+			if (comp.equals(p, newPromo)) {
+				return p;
+			}
+		}
+		return null;
+	}
+
+	private boolean evalCurrentPromos(final List<Promo> promos, final Promo cp, final Equalator<Promo> comp) {
 		ListIterator<Promo> it = promos.listIterator();
 		while (it.hasNext()) {
 			Promo p = it.next();
 			// verificamos si ya existe la promo en la db
-			if (cp.getText().equals(p.getText())) {
+			if (comp.equals(cp, p)) {
 				// existe, la quitamos de la lista de promos encontradas, pero verificamos si cambio la imagen para actualizar el stock
 				it.remove();
 				if (!cp.getImage().equals(p.getImage())) {
-					// si hubo cambio de imagen es seguro por quedar sin stock. cambiamos el flag y listo
-					cp.setImage(p.getImage());
-					cp.setHasStock(false);
-					cp.setUpdated(DateUtils.getCurrent());
+					copyTo(p, cp);
 					promoDao.save(cp);
 					return true;
 				}
@@ -93,4 +115,28 @@ public class WorkerController {
 		return true;
 	}
 
+	private static interface Equalator<T> {
+		
+		public boolean equals(T o1, T o2);
+	
+	}
+	
+	private static class PromoTextEquals implements Equalator<Promo> {
+		
+		@Override
+		public boolean equals(Promo o1, Promo o2) {
+			return o1.getText().equalsIgnoreCase(o2.getText());
+		}
+		
+	}
+	
+	private static class PromoTitleEquals implements Equalator<Promo> {
+		
+		@Override
+		public boolean equals(Promo o1, Promo o2) {
+			return o1.getTitle().equalsIgnoreCase(o2.getTitle());
+		}
+		
+	}
+	
 }

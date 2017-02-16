@@ -29,7 +29,7 @@ public class Promo extends ModelKey implements Serializable {
 	
 	private String dateTo;
 	
-	private Boolean hasStock;
+	private Boolean hasStock = Boolean.FALSE;
 	
 	private Date created;
 	
