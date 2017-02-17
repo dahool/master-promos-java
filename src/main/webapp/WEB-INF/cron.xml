@@ -34,7 +34,7 @@
     </retry-parameters>    
   </cron>
   <cron>
-    <url>/worker/single</url>
+    <url>/worker/continue</url>
     <description>every 10 minutes from 11:00 to 13:00</description>
     <schedule>every 10 minutes from 11:00 to 13:00</schedule>
     <timezone>America/Argentina/Buenos_Aires</timezone>
