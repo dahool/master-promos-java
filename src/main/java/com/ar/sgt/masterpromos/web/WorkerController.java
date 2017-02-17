@@ -63,6 +63,8 @@ public class WorkerController {
 		List<Promo> foundPromos = promoParser.parse(url);
 		List<Promo> currentPromos = promoDao.listPromosOnly();
 		
+		boolean isEmpty = foundPromos.isEmpty();
+		
 		boolean hasChanged = false;
 		
 		for (Promo cp : currentPromos) {
@@ -94,7 +96,7 @@ public class WorkerController {
 			notifyService.sendNotification();
 		}
 		
-		if (foundPromos.isEmpty()) {
+		if (isEmpty) {
 			throw new NoPromosException();
 		}
 		
