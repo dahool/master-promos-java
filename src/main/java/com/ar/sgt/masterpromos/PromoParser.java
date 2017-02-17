@@ -34,7 +34,7 @@ public class PromoParser {
 	
 	private final static String SIN_DATOS = "Ninguna oferta.";
 	
-	private static final int TIMEOUT = 30000;
+	private static final int TIMEOUT = 60000;
 	
 	private final Pattern PERC_FIND = Pattern.compile("([\\d]+\\%){1}");
 
