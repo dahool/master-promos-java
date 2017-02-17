@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
   <cron>
-    <url>/worker</url>
+    <url>/worker/single</url>
     <description>every 120 minutes from 00:00 to 09:50</description>
     <schedule>every 120 minutes from 00:00 to 09:50</schedule>
     <retry-parameters>
@@ -12,9 +12,9 @@
     <timezone>America/Argentina/Buenos_Aires</timezone>
   </cron>
   <cron>
-    <url>/worker</url>
-    <description>every 60 minutes from 13:30 to 23:59</description>
-    <schedule>every 60 minutes from 13:30 to 23:59</schedule>
+    <url>/worker/single</url>
+    <description>every 60 minutes from 13:00 to 23:59</description>
+    <schedule>every 60 minutes from 13:00 to 23:59</schedule>
     <retry-parameters>
       <job-retry-limit>1</job-retry-limit> <!-- retry times -->
       <min-backoff-seconds>1800</min-backoff-seconds> <!-- minimum seconds to wait before retry -->
@@ -23,21 +23,26 @@
     <timezone>America/Argentina/Buenos_Aires</timezone>
   </cron>
   <cron>
-    <url>/worker</url>
-    <description>every 2 minutes from 09:50 to 10:15</description>
-    <schedule>every 2 minutes from 09:50 to 10:15</schedule>
+    <url>/worker/continue</url>
+    <description>every 2 minutes from 09:55 to 11:00</description>
+    <schedule>every 2 minutes from 09:55 to 11:00</schedule>
     <timezone>America/Argentina/Buenos_Aires</timezone>
+    <retry-parameters>
+      <job-retry-limit>1</job-retry-limit> <!-- retry times -->
+      <min-backoff-seconds>30</min-backoff-seconds> <!-- minimum seconds to wait before retry -->
+      <max-backoff-seconds>60</max-backoff-seconds> <!-- maximum seconds to wait before retry -->
+    </retry-parameters>    
   </cron>
   <cron>
-    <url>/worker</url>
-    <description>every 10 minutes from 10:15 to 13:15</description>
-    <schedule>every 10 minutes from 10:15 to 13:15</schedule>
+    <url>/worker/single</url>
+    <description>every 10 minutes from 11:00 to 13:00</description>
+    <schedule>every 10 minutes from 11:00 to 13:00</schedule>
     <timezone>America/Argentina/Buenos_Aires</timezone>
     <retry-parameters>
       <job-retry-limit>1</job-retry-limit> <!-- retry times -->
       <min-backoff-seconds>240</min-backoff-seconds> <!-- minimum seconds to wait before retry -->
       <max-backoff-seconds>300</max-backoff-seconds> <!-- maximum seconds to wait before retry -->
-    </retry-parameters>    
+    </retry-parameters>
   </cron>
   <cron>
     <url>/ha/keepalive</url>

@@ -36,9 +36,29 @@ public class WorkerController {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@RequestMapping(method = RequestMethod.GET, produces = "text/plain")
+	@RequestMapping(value="/single", method = RequestMethod.GET, produces = "text/plain")
 	@ResponseBody
 	public String updatePromos() throws Exception {
+		
+		try {
+			runUpdatePromos();
+		} catch (NoPromosException e) {
+			// fail silently
+		}
+		
+		return "OK";
+	}
+	
+	@RequestMapping(value="/continue", method = RequestMethod.GET, produces = "text/plain")
+	@ResponseBody
+	public String updatePromosContinue() throws Exception {
+		
+		runUpdatePromos();
+		
+		return "OK";
+	}
+	
+	private void runUpdatePromos() throws Exception {
 		
 		List<Promo> foundPromos = promoParser.parse(url);
 		List<Promo> currentPromos = promoDao.listPromosOnly();
@@ -74,8 +94,12 @@ public class WorkerController {
 			notifyService.sendNotification();
 		}
 		
+		if (foundPromos.isEmpty()) {
+			throw new NoPromosException();
+		}
+		
 		logger.info("Worker end");
-		return "OK";
+		
 	}
 
 	private void copyTo(final Promo fromElement, final Promo toElement) {
@@ -136,6 +160,10 @@ public class WorkerController {
 		public boolean equals(Promo o1, Promo o2) {
 			return o1.getTitle().equalsIgnoreCase(o2.getTitle());
 		}
+		
+	}
+	
+	private static class NoPromosException extends Exception {
 		
 	}
 	
