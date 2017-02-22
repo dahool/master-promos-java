@@ -35,8 +35,8 @@
   </cron>
   <cron>
     <url>/worker/continue</url>
-    <description>every 10 minutes from 11:02 to 14:00</description>
-    <schedule>every 10 minutes from 11:02 to 14:00</schedule>
+    <description>every 10 minutes from 11:02 to 15:00</description>
+    <schedule>every 10 minutes from 11:02 to 15:00</schedule>
     <timezone>America/Argentina/Buenos_Aires</timezone>
     <retry-parameters>
       <job-retry-limit>5</job-retry-limit> <!-- retry times -->

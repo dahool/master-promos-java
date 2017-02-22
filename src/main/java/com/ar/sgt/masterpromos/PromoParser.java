@@ -79,7 +79,9 @@ public class PromoParser {
 				if (m.find()) {
 					promo.setPercentage(m.group(0));
 				}
-				promos.add(promo);
+				if (promo.getPercentage() != null && promo.getPoints() != null) {
+					promos.add(promo);
+				}
 				logger.info("Parsed: {}", promo);
 			}
 
@@ -134,12 +136,12 @@ public class PromoParser {
 		}
 		reader.close();*/
 		PromoParser parser = new PromoParser();
-		System.setProperty("javax.net.debug", "all");
-		List<Promo> promos = parser.parse("https://sorpresas.mastercard.com/ar");
-		//List<Promo> promos = parser.parse(Jsoup.parse(parser.loadFile("page.html")));
+		//System.setProperty("javax.net.debug", "all");
+		//List<Promo> promos = parser.parse("https://sorpresas.mastercard.com/ar");
+		List<Promo> promos = parser.parse(Jsoup.parse(parser.loadFile("main.html")));
 		System.out.println(promos);
 		for (Promo promo : promos) {
-			parser.parseDetails(promo);
+			//parser.parseDetails(promo);
 			System.out.println(promo);
 		}
 	}
