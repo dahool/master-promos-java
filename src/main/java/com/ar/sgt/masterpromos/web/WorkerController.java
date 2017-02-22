@@ -128,7 +128,7 @@ public class WorkerController {
 			if (comp.equals(existingPromo, newPromo)) {
 				// existe, la quitamos de la lista de promos encontradas, pero verificamos si cambio la imagen para actualizar el stock
 				it.remove();
-				if (!existingPromo.getImage().equals(newPromo.getImage())) {
+				if (!existingPromo.getImage().equals(newPromo.getImage()) || !existingPromo.getHasStock().equals(newPromo.getHasStock())) {
 					copyTo(newPromo, existingPromo);
 					promoDao.save(existingPromo);
 					return true;

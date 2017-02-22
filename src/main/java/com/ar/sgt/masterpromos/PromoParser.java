@@ -56,8 +56,9 @@ public class PromoParser {
 	
 	public List<Promo> parse(Document doc) throws Exception {
 		List<Promo> promos = new ArrayList<Promo>();
-		Elements ePromos = doc.select("div.promotion-content");
-
+		//Elements ePromos = doc.select("div.promotion-content");
+		Elements ePromos = doc.select("article.promotion");
+		
 		if (ePromos.size() == 0) {
 			logger.info("Promo list is empty");
 			if (doc.select("section.socios").text().contains(SIN_DATOS)) {
@@ -74,7 +75,13 @@ public class PromoParser {
 				promo.setUrl(ePromo.select("a").attr("href"));
 				promo.setImage(ePromo.select("div.promotion-header").select("img").attr("src"));
 				promo.setPoints(ePromo.select("span.promotion-points").text());
+				if (!ePromo.select("div.agotado").isEmpty()) {
+					promo.setHasStock(Boolean.FALSE);;
+				} else {
+					promo.setHasStock(Boolean.TRUE);
+				}
 				promo.setCreated(DateUtils.getCurrent());
+				
 				Matcher m = PERC_FIND.matcher(promo.getText());
 				if (m.find()) {
 					promo.setPercentage(m.group(0));
