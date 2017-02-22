@@ -32,7 +32,7 @@ public class WorkerController {
 	private PromoParser promoParser;
 	
 	@Value("${service.url}")
-	private String url = null; //"https://sorpresas.mastercard.com/ar/beneficios/main/index/1/10/op/key/descuentos_acumulables";
+	private String url = null;
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -120,24 +120,24 @@ public class WorkerController {
 		return null;
 	}
 
-	private boolean evalCurrentPromos(final List<Promo> promos, final Promo cp, final Equalator<Promo> comp) {
-		ListIterator<Promo> it = promos.listIterator();
+	private boolean evalCurrentPromos(final List<Promo> promosFound, final Promo existingPromo, final Equalator<Promo> comp) {
+		ListIterator<Promo> it = promosFound.listIterator();
 		while (it.hasNext()) {
-			Promo p = it.next();
+			Promo newPromo = it.next();
 			// verificamos si ya existe la promo en la db
-			if (comp.equals(cp, p)) {
+			if (comp.equals(existingPromo, newPromo)) {
 				// existe, la quitamos de la lista de promos encontradas, pero verificamos si cambio la imagen para actualizar el stock
 				it.remove();
-				if (!cp.getImage().equals(p.getImage())) {
-					copyTo(p, cp);
-					promoDao.save(cp);
+				if (!existingPromo.getImage().equals(newPromo.getImage())) {
+					copyTo(newPromo, existingPromo);
+					promoDao.save(existingPromo);
 					return true;
 				}
 				return false;
 			}
 		}
 		// la promo de la db no existe en las nuevas, la borramos y notificamos los cambios
-		promoDao.delete(cp);
+		promoDao.delete(existingPromo);
 		return true;
 	}
 
@@ -165,6 +165,7 @@ public class WorkerController {
 		
 	}
 	
+	@SuppressWarnings("serial")
 	private static class NoPromosException extends Exception {
 		
 	}
