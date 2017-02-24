@@ -66,4 +66,11 @@
     <schedule>every day 00:00</schedule>
     <timezone>America/Argentina/Buenos_Aires</timezone>
   </cron>
+  <cron>
+    <url>/ha/urlcheck</url>
+    <description>check url</description>
+    <schedule>every day 09:30</schedule>
+    <timezone>America/Argentina/Buenos_Aires</timezone>
+  </cron>
+    
 </cronentries>

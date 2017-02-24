@@ -133,6 +133,22 @@ public class PromoParser {
 		return b.toString();
 	}
 	
+	public String serviceUrlCheck(String url) throws Exception {
+
+		Document doc = Jsoup.connect(url).timeout(TIMEOUT).userAgent(getUserAgent()).get();
+		
+		Elements menu = doc.select("a.comercios");
+		
+		for (Element item : menu) {
+			String href = item.attr("href"); 
+			if (href != null && href.contains("descuentos")) {
+				return href;
+			}
+		}
+		
+		return null;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		/*File f = new File("c:\\tmp\\master\\page.html");
 		BufferedReader reader = new BufferedReader(new FileReader(f));

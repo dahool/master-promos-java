@@ -1,11 +1,14 @@
 package com.ar.sgt.masterpromos.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ar.sgt.masterpromos.PromoParser;
 import com.ar.sgt.masterpromos.dao.ConfigDao;
 import com.ar.sgt.masterpromos.dao.PromoDao;
 import com.ar.sgt.masterpromos.model.Config;
@@ -15,14 +18,22 @@ import com.ar.sgt.masterpromos.model.Promo;
 @RequestMapping("/ha")
 public class WarmupController {
 	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	@Autowired
 	private PromoDao promoDao;
 
 	@Autowired
 	private ConfigDao configDao;
 
+	@Autowired
+	private PromoParser parser;
+	
 	@Value("${service.url}")
-	private String url = null;
+	private String serviceUrl = null;
+
+	@Value("${main.url}")
+	private String mainUrl = null;
 	
 	@RequestMapping(value = "/keepalive", produces = "text/plain")
 	@ResponseBody
@@ -46,10 +57,35 @@ public class WarmupController {
 		Config cfg = configDao.getByKey("URL");
 		if (cfg == null) {
 			cfg = new Config("URL");
-			cfg.setConfigValue(url);
+			cfg.setConfigValue(serviceUrl);
 			configDao.save(cfg);
 		}
 		return "OK";
 	}	
+
+	@RequestMapping(value = "/urlcheck", produces = "text/plain")
+	@ResponseBody
+	public String urlcheck() throws Exception {
+
+		String url = parser.serviceUrlCheck(mainUrl);
+		
+		logger.info("URL is: {}", url);
+		
+		if (url != null) {
+			Config cfg = configDao.getByKey("URL");
+			if (cfg == null) {
+				cfg = new Config("URL");
+				cfg.setConfigValue(url);
+				configDao.save(cfg);
+			} else if (!cfg.getConfigValue().equals(url)) {
+				logger.warn("Updated service url: {}", url);
+				cfg.setConfigValue(url);
+				configDao.save(cfg);
+			}
+		}
+
+		return "OK";
+	}	
+
 	
 }
