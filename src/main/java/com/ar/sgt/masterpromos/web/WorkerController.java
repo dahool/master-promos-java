@@ -95,7 +95,7 @@ public class WorkerController {
 
 			if (!foundPromos.isEmpty()) {
 				hasChanged = true;
-				logger.info("New: {}", foundPromos);
+				logger.info("Found: {}", foundPromos);
 				for (Promo p : foundPromos) {
 					// complete missing details
 					Promo newPromo = promoParser.parseDetails(p);
@@ -111,8 +111,11 @@ public class WorkerController {
 					} else {
 						// new promo found, add it
 						promoDao.save(newPromo);
+						logger.info("Added: {}", newPromo);
 					}
 				}
+			} else {
+				logger.info("No changes.");
 			}
 			
 			if (!deleteCandidates.isEmpty()) {
