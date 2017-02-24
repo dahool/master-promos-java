@@ -1,7 +1,7 @@
 package com.ar.sgt.masterpromos.web;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import com.ar.sgt.masterpromos.NotificationService;
 import com.ar.sgt.masterpromos.PromoParser;
 import com.ar.sgt.masterpromos.dao.PromoDao;
 import com.ar.sgt.masterpromos.model.Promo;
-import com.ar.sgt.masterpromos.utils.DateUtils;
+import com.ar.sgt.masterpromos.utils.Equalator;
 
 @Controller
 @RequestMapping("/worker")
@@ -61,36 +61,67 @@ public class WorkerController {
 	private void runUpdatePromos() throws Exception {
 		
 		List<Promo> foundPromos = promoParser.parse(url);
-		List<Promo> currentPromos = promoDao.listPromosOnly();
+		List<Promo> existingDbPromos = promoDao.listPromosOnly();
 		
 		boolean isEmpty = foundPromos.isEmpty();
 		
 		boolean hasChanged = false;
 		
-		for (Promo cp : currentPromos) {
-			if (evalCurrentPromos(foundPromos, cp, new PromoTextEquals())) {
-				hasChanged = true;
-			}
-		}
-
-		if (!foundPromos.isEmpty()) {
+		if (isEmpty && !existingDbPromos.isEmpty()) {
+			
+			promoDao.delete(existingDbPromos);
 			hasChanged = true;
-			logger.info("Found {}", foundPromos);
-			for (Promo p : foundPromos) {
-				Promo newPromo = promoParser.parseDetails(p);
-				// luego de completar los datos verificamos si realmente hubo cambios o sólo cambió el título
-				Promo actual = findActual(currentPromos, newPromo, new PromoTitleEquals()); 
-				if (actual == null) {
-					// agregamos lo nuevo
-					promoDao.save(newPromo);
+		
+		} else if (!isEmpty) {
+			
+			List<Promo> deleteCandidates = new ArrayList<>();
+
+			// check if any of the promos already exists in db. quick try by text
+			for (Promo existingPromo : existingDbPromos) {
+				Promo updated = findInList(foundPromos, existingPromo, Promo.TextEqualator);
+				if (updated != null) {
+					if (existingPromo.hasChanged(updated)) {
+						hasChanged = true;
+						existingPromo.copyFrom(updated);
+						promoDao.save(existingPromo);
+						logger.info("Updated: {}", existingPromo);
+					}
+					foundPromos.remove(updated);
 				} else {
-					// actualizamos los cambios y seguimos
-					copyTo(newPromo, actual);
-					promoDao.save(actual);
+					logger.info("To be deleted: {}", existingPromo);
+					deleteCandidates.add(existingPromo);
 				}
 			}
+
+			if (!foundPromos.isEmpty()) {
+				hasChanged = true;
+				logger.info("New: {}", foundPromos);
+				for (Promo p : foundPromos) {
+					// complete missing details
+					Promo newPromo = promoParser.parseDetails(p);
+					// now check again if exists
+					Promo existingPromo = findInList(existingDbPromos, newPromo, Promo.TitleEqualator);
+					if (existingPromo != null) {
+						if (existingPromo.hasChanged(newPromo)) {
+							existingPromo.copyFrom(newPromo);
+							promoDao.save(existingPromo);
+							logger.info("Updated: {}", existingPromo);
+						}
+						deleteCandidates.remove(existingPromo);
+					} else {
+						// new promo found, add it
+						promoDao.save(newPromo);
+					}
+				}
+			}
+			
+			if (!deleteCandidates.isEmpty()) {
+				hasChanged = true;
+				promoDao.delete(deleteCandidates);
+			}
+			
 		}
-		
+
 		if (hasChanged) {
 			logger.debug("Send notification");
 			notifyService.sendNotification();
@@ -104,67 +135,15 @@ public class WorkerController {
 		
 	}
 
-	private void copyTo(final Promo fromElement, final Promo toElement) {
-		toElement.setText(fromElement.getText());
-		toElement.setHasStock(fromElement.getHasStock());
-		toElement.setImage(fromElement.getImage());
-		toElement.setUpdated(DateUtils.getCurrent());
-	}
-
-	private Promo findActual(List<Promo> currentPromos, Promo newPromo, PromoTitleEquals comp) {
-		for (Promo p : currentPromos) {
-			if (comp.equals(p, newPromo)) {
+	private Promo findInList(List<Promo> inList, Promo searchPromo, Equalator<Promo> comp) {
+		for (Promo p : inList) {
+			if (comp.equals(p, searchPromo)) {
 				return p;
 			}
 		}
 		return null;
 	}
 
-	private boolean evalCurrentPromos(final List<Promo> promosFound, final Promo existingPromo, final Equalator<Promo> comp) {
-		ListIterator<Promo> it = promosFound.listIterator();
-		while (it.hasNext()) {
-			Promo newPromo = it.next();
-			// verificamos si ya existe la promo en la db
-			if (comp.equals(existingPromo, newPromo)) {
-				// existe, la quitamos de la lista de promos encontradas, pero verificamos si cambio la imagen para actualizar el stock
-				it.remove();
-				if (!existingPromo.getImage().equals(newPromo.getImage()) || !existingPromo.getHasStock().equals(newPromo.getHasStock())) {
-					copyTo(newPromo, existingPromo);
-					promoDao.save(existingPromo);
-					return true;
-				}
-				return false;
-			}
-		}
-		// la promo de la db no existe en las nuevas, la borramos y notificamos los cambios
-		promoDao.delete(existingPromo);
-		return true;
-	}
-
-	private static interface Equalator<T> {
-		
-		public boolean equals(T o1, T o2);
-	
-	}
-	
-	private static class PromoTextEquals implements Equalator<Promo> {
-		
-		@Override
-		public boolean equals(Promo o1, Promo o2) {
-			return o1.getText().equalsIgnoreCase(o2.getText());
-		}
-		
-	}
-	
-	private static class PromoTitleEquals implements Equalator<Promo> {
-		
-		@Override
-		public boolean equals(Promo o1, Promo o2) {
-			return o1.getTitle().equalsIgnoreCase(o2.getTitle());
-		}
-		
-	}
-	
 	@SuppressWarnings("serial")
 	private static class NoPromosException extends Exception {
 		

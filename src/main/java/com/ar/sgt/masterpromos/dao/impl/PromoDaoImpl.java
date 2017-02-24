@@ -70,7 +70,5 @@ public class PromoDaoImpl extends AbstractDao<Promo> implements PromoDao {
 		
 		return objects;
 	}
-	
-	
 		
 }

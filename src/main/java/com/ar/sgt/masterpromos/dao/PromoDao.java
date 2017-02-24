@@ -11,6 +11,8 @@ public interface PromoDao {
 	List<Promo> listAll();
 
 	void delete(Promo promo);
+
+	void delete(List<Promo> promos);
 	
 	Promo findByText(String text);
 	

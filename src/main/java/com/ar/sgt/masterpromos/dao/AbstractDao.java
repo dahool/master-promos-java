@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ar.sgt.masterpromos.model.ModelKey;
-import com.ar.sgt.masterpromos.model.Promo;
 import com.ar.sgt.masterpromos.orm.annotation.EntityMapper;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -17,6 +16,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Transaction;
 
 public abstract class AbstractDao<T extends ModelKey> {
 
@@ -77,6 +77,21 @@ public abstract class AbstractDao<T extends ModelKey> {
 	public void delete(T obj) {
 		if (obj != null && obj.getKey() != null) {
 			datastoreService.delete(KeyFactory.createKey(entityName, obj.getKey()));
+		}
+	}
+	
+	public void delete(List<T> objList) {
+		Transaction txn = datastoreService.beginTransaction();
+		try {
+			for (T obj : objList) {
+				datastoreService.delete(txn, KeyFactory.createKey(entityName, obj.getKey()));	
+			}
+			txn.commit();
+		} finally {
+			// we don't need to rollback
+			if (txn.isActive()) {
+				txn.commit();
+			}
 		}
 	}
 	

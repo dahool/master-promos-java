@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.ar.sgt.masterpromos.orm.annotation.Entity;
+import com.ar.sgt.masterpromos.utils.DateUtils;
+import com.ar.sgt.masterpromos.utils.Equalator;
+
 
 @Entity
 public class Promo extends ModelKey implements Serializable {
@@ -13,6 +16,10 @@ public class Promo extends ModelKey implements Serializable {
 	 */
 	transient private static final long serialVersionUID = 1L;
 
+	transient public static final Equalator<Promo> TextEqualator = new PromoTextEquals();
+	
+	transient public static final Equalator<Promo> TitleEqualator = new PromoTitleEquals();
+	
 	private String url;
 
 	private String image;
@@ -134,6 +141,30 @@ public class Promo extends ModelKey implements Serializable {
 		this.expires = expires;
 	}
 
+	public void copyFrom(Promo source) {
+		setText(source.getText());
+		setHasStock(source.getHasStock());
+		setImage(source.getImage());
+		setUpdated(DateUtils.getCurrent());
+	}
+	
+	public boolean hasChanged(Promo source) {
+		return !(getText().equalsIgnoreCase(source.getText()) && getImage().equals(source.getImage()) && getHasStock().equals(source.getHasStock()));
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
+			Promo p = (Promo) obj;
+			if (p.getKey() != null && getKey() != null) {
+				return getKey().equals(p.getKey());	
+			} else {
+				return TextEqualator.equals(this, p);
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder b = new StringBuilder("Promo [");
@@ -150,6 +181,20 @@ public class Promo extends ModelKey implements Serializable {
 		b.append("updated=").append(updated).append(";");
 		b.append("percentage=").append(percentage).append("]");
 		return b.toString();
+	}
+
+	private static class PromoTextEquals implements Equalator<Promo> {
+		@Override
+		public boolean equals(Promo o1, Promo o2) {
+			return o1.getText().equalsIgnoreCase(o2.getText());
+		}
+	}
+	
+	private static class PromoTitleEquals implements Equalator<Promo> {
+		@Override
+		public boolean equals(Promo o1, Promo o2) {
+			return o1.getTitle().equalsIgnoreCase(o2.getTitle());
+		}
 	}
 	
 }
