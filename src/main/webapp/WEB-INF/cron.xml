@@ -13,8 +13,8 @@
   </cron>
   <cron>
     <url>/worker/single</url>
-    <description>every 60 minutes from 15:00 to 23:59</description>
-    <schedule>every 60 minutes from 15:00 to 23:59</schedule>
+    <description>every 60 minutes from 18:00 to 23:59</description>
+    <schedule>every 60 minutes from 18:00 to 23:59</schedule>
     <retry-parameters>
       <job-retry-limit>1</job-retry-limit> <!-- retry times -->
       <min-backoff-seconds>1800</min-backoff-seconds> <!-- minimum seconds to wait before retry -->
@@ -44,6 +44,17 @@
       <max-backoff-seconds>120</max-backoff-seconds> <!-- maximum seconds to wait before retry -->
     </retry-parameters>
   </cron>
+  <cron>
+    <url>/worker/continue</url>
+    <description>every 15 minutes from 15:00 to 18:00</description>
+    <schedule>every 15 minutes from 15:00 to 18:00</schedule>
+    <timezone>America/Argentina/Buenos_Aires</timezone>
+    <retry-parameters>
+      <job-retry-limit>5</job-retry-limit> <!-- retry times -->
+      <min-backoff-seconds>120</min-backoff-seconds> <!-- minimum seconds to wait before retry -->
+      <max-backoff-seconds>180</max-backoff-seconds> <!-- maximum seconds to wait before retry -->
+    </retry-parameters>
+  </cron>  
   <cron>
     <url>/ha/keepalive</url>
     <description>keep alive</description>

@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ar.sgt.masterpromos.NotificationService;
 import com.ar.sgt.masterpromos.PromoParser;
+import com.ar.sgt.masterpromos.dao.ConfigDao;
 import com.ar.sgt.masterpromos.dao.PromoDao;
+import com.ar.sgt.masterpromos.model.Config;
 import com.ar.sgt.masterpromos.model.Promo;
 import com.ar.sgt.masterpromos.utils.Equalator;
 
@@ -30,6 +32,9 @@ public class WorkerController {
 	
 	@Autowired
 	private PromoParser promoParser;
+
+	@Autowired
+	private ConfigDao configDao;
 	
 	@Value("${service.url}")
 	private String url = null;
@@ -59,7 +64,11 @@ public class WorkerController {
 	}
 	
 	private void runUpdatePromos() throws Exception {
-		
+		Config config = configDao.getByKey("URL");
+		if (config != null) {
+			url = config.getConfigValue();
+		}
+
 		List<Promo> foundPromos = promoParser.parse(url);
 		List<Promo> existingDbPromos = promoDao.listPromosOnly();
 		
