@@ -16,7 +16,6 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Transaction;
 
 public abstract class AbstractDao<T extends ModelKey> {
 
@@ -81,17 +80,8 @@ public abstract class AbstractDao<T extends ModelKey> {
 	}
 	
 	public void delete(List<T> objList) {
-		Transaction txn = datastoreService.beginTransaction();
-		try {
-			for (T obj : objList) {
-				datastoreService.delete(txn, KeyFactory.createKey(entityName, obj.getKey()));	
-			}
-			txn.commit();
-		} finally {
-			// we don't need to rollback
-			if (txn.isActive()) {
-				txn.commit();
-			}
+		for (T obj : objList) {
+			datastoreService.delete(KeyFactory.createKey(entityName, obj.getKey()));	
 		}
 	}
 	
