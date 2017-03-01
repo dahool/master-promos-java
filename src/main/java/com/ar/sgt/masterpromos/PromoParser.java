@@ -61,12 +61,12 @@ public class PromoParser {
 		
 		if (ePromos.size() == 0) {
 			logger.info("Promo list is empty");
-			if (doc.select("section.socios").text().contains(SIN_DATOS)) {
+			/*if (doc.select("section.socios").text().contains(SIN_DATOS)) {
 				logger.info(SIN_DATOS);
 			} else {
 				logger.error(doc.html());
 				throw new Exception("Page cannot be analized.");
-			}
+			}*/
 		} else {
 
 			for (Element ePromo : ePromos) {
