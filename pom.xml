@@ -25,7 +25,7 @@
 		<jackson.version>2.8.6</jackson.version>
 		<jsoup.version>1.10.2</jsoup.version>
 
-		<appengine.sdk.version>1.9.49</appengine.sdk.version>
+		<appengine.sdk.version>1.9.50</appengine.sdk.version>
 		<beanutils.version>1.9.3</beanutils.version>
 	</properties>
 
