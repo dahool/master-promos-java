@@ -82,6 +82,8 @@ public class WarmupController {
 				cfg.setConfigValue(url);
 				configDao.save(cfg);
 			}
+		} else {
+			throw new Exception("NULL URL!");
 		}
 
 		return "OK";
