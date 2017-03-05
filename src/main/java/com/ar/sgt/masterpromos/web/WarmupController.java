@@ -71,8 +71,9 @@ public class WarmupController {
 		
 		logger.info("URL is: {}", url);
 		
+		Config cfg = configDao.getByKey("URL");
+		
 		if (url != null) {
-			Config cfg = configDao.getByKey("URL");
 			if (cfg == null) {
 				cfg = new Config("URL");
 				cfg.setConfigValue(url);
@@ -83,6 +84,10 @@ public class WarmupController {
 				configDao.save(cfg);
 			}
 		} else {
+			if (cfg != null && !mainUrl.equals(cfg.getConfigValue())) {
+				cfg.setConfigValue(mainUrl);
+				configDao.save(cfg);
+			}
 			throw new Exception("NULL URL!");
 		}
 

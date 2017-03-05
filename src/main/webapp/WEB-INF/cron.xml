@@ -80,7 +80,7 @@
   <cron>
     <url>/ha/urlcheck</url>
     <description>check url</description>
-    <schedule>every day 13:00</schedule>
+    <schedule>every day 15:00</schedule>
     <timezone>America/Argentina/Buenos_Aires</timezone>
     <retry-parameters>
       <job-retry-limit>5</job-retry-limit> <!-- retry times -->
